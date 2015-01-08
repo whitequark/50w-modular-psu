@@ -30,8 +30,8 @@
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
@@ -55,10 +55,10 @@
 <layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="yes"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="no" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="no" active="no"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="no" active="no"/>
@@ -3325,7 +3325,7 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="VALUE" x="126.92" y="10.922" size="1.27" layer="27" rot="R180"/>
 </element>
 <element name="IC3" library="local" package="SO-16W" value="ADUM2401ARWZ" x="92.63" y="11.43" rot="R270"/>
-<element name="IC5" library="local" package="D2PACK" value="7812" x="7.62" y="40.72"/>
+<element name="IC5" library="local" package="D2PACK" value="7812" x="6.985" y="40.72"/>
 <element name="JP1" library="pinhead" package="1X07/90" value="" x="1.27" y="17.78" rot="R90"/>
 <element name="Q1" library="local" package="TO220BV" value="IRF1018E" x="52.07" y="49.53" rot="R90"/>
 <element name="Q2" library="local" package="TO220BV" value="IRF1018E" x="52.07" y="29.21" rot="R90"/>
@@ -3734,7 +3734,7 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="10.24" y1="31.75" x2="16.51" y2="31.75" width="0.6096" layer="1"/>
 <wire x1="16.51" y1="31.75" x2="17.78" y2="33.02" width="0.6096" layer="1"/>
 <wire x1="17.78" y1="33.02" x2="17.78" y2="36.83" width="0.6096" layer="1"/>
-<wire x1="10.24" y1="31.75" x2="10.16" y2="31.83" width="0.6096" layer="1"/>
+<wire x1="10.24" y1="31.75" x2="9.525" y2="31.83" width="0.6096" layer="1"/>
 </signal>
 <signal name="N$16">
 <contactref element="IC2" pad="6"/>
@@ -3762,13 +3762,13 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="20.0025" y1="60.96" x2="38.1" y2="60.96" width="2.54" layer="1"/>
 <wire x1="38.1" y1="60.96" x2="45.72" y2="60.96" width="2.54" layer="1"/>
 <wire x1="45.72" y1="60.96" x2="50.8" y2="55.88" width="2.54" layer="1"/>
-<via x="5.08" y="35.56" extent="1-16" drill="0.6"/>
-<wire x1="5.08" y1="35.56" x2="5.08" y2="31.83" width="1.27" layer="1"/>
+<via x="4.445" y="35.56" extent="1-16" drill="0.6"/>
+<wire x1="4.445" y1="35.56" x2="4.445" y2="31.83" width="1.27" layer="1"/>
 <wire x1="5.08" y1="58.38" x2="5.12" y2="58.38" width="1.27" layer="16"/>
 <wire x1="5.12" y1="58.38" x2="8.89" y2="54.61" width="1.27" layer="16"/>
 <wire x1="8.89" y1="54.61" x2="8.89" y2="41.91" width="1.27" layer="16"/>
-<wire x1="8.89" y1="41.91" x2="5.08" y2="38.1" width="1.27" layer="16"/>
-<wire x1="5.08" y1="38.1" x2="5.08" y2="35.56" width="1.27" layer="16"/>
+<wire x1="8.89" y1="41.91" x2="4.445" y2="37.465" width="1.27" layer="16"/>
+<wire x1="4.445" y1="37.465" x2="4.445" y2="35.56" width="1.27" layer="16"/>
 <wire x1="51.7525" y1="40.77" x2="51.7525" y2="49.2125" width="1.27" layer="1"/>
 <wire x1="51.7525" y1="49.2125" x2="52.07" y2="49.53" width="1.27" layer="1"/>
 </signal>
@@ -3996,9 +3996,6 @@ Please make sure your boards conform to these design rules.</description>
 </signal>
 <signal name="N$35">
 <via x="66.04" y="45.72" extent="1-16" drill="0.5"/>
-</signal>
-<signal name="N$52">
-<via x="5.08" y="45.72" extent="1-16" drill="0.5"/>
 </signal>
 <signal name="N$53">
 <via x="109.22" y="20.32" extent="1-16" drill="0.5"/>
