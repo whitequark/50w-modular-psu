@@ -5,3 +5,6 @@
  * power trafo is 2-2-130 with center tap
  * HV output close to analog causes arcing
  * isolated stage over 2 turns breaks down BAT70
+ * vias not covered by soldermask
+ * rework on inductor sucks
+ * rework on components near power trafo sucks
