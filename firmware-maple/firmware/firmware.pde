@@ -1,6 +1,12 @@
-#include <timer.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <alloca.h>
+
+#include <timer.h>
+#include <spi.h>
+
+#define IRQ(x) extern "C" void x()
 
 const char font[][6] = {
   {0x00,0x00,0x00,0x00,0x00,0x00},   //   0x20 32
@@ -183,12 +189,30 @@ void lcd_text(uint16 bg, uint16 fg, int x, int y, const char *str) {
     }
   }
   lcd_finish();
-} 
+}
+
+void lcd_printf(uint16 bg, uint16 fg, int x, int y, int w, const char *fmt, ...) {
+  va_list vl;
+  va_start(vl, fmt);
+  char *display = (char*) alloca(w + 1);
+  memset(display, 0, w + 1);
+  vsnprintf(display, w + 1, fmt, vl);
+  memset(display + strlen(display), 0x20, w - strlen(display));
+  lcd_text(bg, fg, x, y, display);
+  va_end(vl);
+}
 
 void update_freq();
 void update_status();
 
-void setup() {  
+void spi_reset() {
+  spi_init(SPI2);
+  SPI2_BASE->CR1 = SPI_CR1_MSTR | SPI_CR1_BR_PCLK_DIV_64 | SPI_CR1_CPHA | SPI_CR1_DFF_16_BIT;
+  SPI2_BASE->CR2 = SPI_CR2_SSOE;
+  spi_irq_enable(SPI2, SPI_RXNE_INTERRUPT);
+}
+
+void setup() {
   afio_init();
   gpio_init(GPIOA);
   gpio_init(GPIOB);
@@ -218,12 +242,21 @@ void setup() {
   gpio_set_mode(GPIOC, 4, GPIO_INPUT_PU);
   gpio_write_bit(GPIOC, 4, 1);
   
+  /* spi */
+  AFIO_BASE->MAPR |= AFIO_MAPR_TIM1_REMAP_PARTIAL; // remap TIM1 away
+  gpio_set_mode(GPIOB, 12, GPIO_OUTPUT_PP); // cs
+  gpio_write_bit(GPIOB, 12, 1);
+  gpio_set_mode(GPIOB, 13, GPIO_AF_OUTPUT_PP); // sck
+  gpio_set_mode(GPIOB, 14, GPIO_INPUT_FLOATING); // miso
+  gpio_set_mode(GPIOB, 15, GPIO_AF_OUTPUT_PP); // mosi
+  spi_reset();
+
   /* PWM out */
   gpio_set_mode(GPIOA, 8, GPIO_AF_OUTPUT_PP);
   timer_adv_reg_map *regs = (TIMER1->regs).adv;
   regs->BDTR = TIMER_BDTR_MOE | TIMER_BDTR_LOCK_OFF;
   timer_set_prescaler(TIMER1, 0);
-  timer_set_reload(TIMER1, 72000000/(190000*2));
+  timer_set_reload(TIMER1, 72000000/(80000*2));
   timer_oc_set_mode(TIMER1, TIMER_CH1, TIMER_OC_MODE_TOGGLE, TIMER_OC_PE);    
   timer_cc_enable(TIMER1, TIMER_CH1);
   timer_pause(TIMER1);
@@ -250,26 +283,68 @@ void update_status() {
 }
 
 void update_freq() {
-  char display[20] = {0};
   int freq = 72000000/((timer_get_reload(TIMER1)+1)*2);
-  snprintf(display, sizeof(display), "%d.%d kHz", freq/1000,freq%1000);
-  memset(display + strlen(display), 0x20, sizeof(display) - strlen(display) - 1);
-  lcd_text(0xffff, 0xf800, 10, 39, display);
+  lcd_printf(0xffff, 0xf800, 10, 39, 14, "%d.%d kHz", freq/1000,freq%1000);
 }
 
+const int adc_ringbuf_size = 256;
+uint16 adc_ringbuf[adc_ringbuf_size] = {0};
+uint8 adc_ringbuf_pos = 0;
+volatile uint16 adc_data = 0, adc_data_old = 0;
+volatile int adc_dead = 1;
+IRQ(__irq_spi2) {
+  uint16 val = spi_rx_reg(SPI2);
+  gpio_write_bit(GPIOB, 12, 1);
+  spi_peripheral_disable(SPI2);
+
+  if(val & 0xf000) {
+    adc_dead = 1;
+  } else {
+    adc_dead = 0;
+    adc_ringbuf[adc_ringbuf_pos++ % adc_ringbuf_size] = spi_rx_reg(SPI2);
+
+    uint32 sum = 0;
+    for(int i = 0; i < adc_ringbuf_size; i++) sum += adc_ringbuf[i];
+    adc_data_old = adc_data;
+    adc_data = sum / adc_ringbuf_size;
+  }
+}
+
+static uint32 debounce = 0;
+
 void loop() {
-  if(!gpio_read_bit(GPIOC, 1) || !gpio_read_bit(GPIOC, 4)) { // bottom, top
-    int adjust = (!gpio_read_bit(GPIOC, 1)) ? -1 : 1;
-    int reload = timer_get_reload(TIMER1);
-    reload += adjust;
-    timer_set_reload(TIMER1, reload);
-    
-    update_freq();
-    delay(100);
-  } else if(!gpio_read_bit(GPIOC, 3)) { // center
-    if(!timer_status(TIMER1)) timer_resume(TIMER1);
-    else timer_pause(TIMER1);
-    update_status();
-    delay(800);
+  if(debounce < systick_uptime_millis) {
+    if(!gpio_read_bit(GPIOC, 1) || !gpio_read_bit(GPIOC, 4)) { // bottom, top
+      int adjust = (!gpio_read_bit(GPIOC, 1)) ? -1 : 1;
+      int reload = timer_get_reload(TIMER1);
+      reload += adjust;
+      timer_set_reload(TIMER1, reload);
+
+      update_freq();
+      debounce = systick_uptime_millis + 10;
+    } else if(!gpio_read_bit(GPIOC, 3)) { // center
+      if(!timer_status(TIMER1)) timer_resume(TIMER1);
+      else timer_pause(TIMER1);
+      update_status();
+      debounce = systick_uptime_millis + 800;
+    }
+  }
+
+  if(spi_is_tx_empty(SPI2)) {
+    gpio_write_bit(GPIOB, 12, 0);
+    spi_peripheral_enable(SPI2);
+    spi_tx_reg(SPI2, 0x3300);
+  }
+
+  if(adc_dead) {
+    lcd_text(0xffff, 0xf800, 10, 60, "DEAD");
+    adc_data_old = 0;
+  } else if(adc_data_old != adc_data) {
+    lcd_printf(0xffff, 0x001f, 10, 60, 9, "%03x  %04x", adc_data, SPI2_BASE->SR);
+    adc_data_old = adc_data;
+  }
+
+  if(SPI2_BASE->SR == 0x00) {
+    spi_reset();
   }
 }
