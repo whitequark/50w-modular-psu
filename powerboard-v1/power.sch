@@ -769,22 +769,6 @@ Source: http://www.analog.com/UploadedFiles/Data_Sheets/409317160AD421_c.pdf</de
 <text x="-7.62" y="8.89" size="1.778" layer="95">&gt;NAME</text>
 <text x="-7.62" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
 </symbol>
-<symbol name="AD7887">
-<text x="-10.16" y="8.89" size="1.778" layer="95">&gt;NAME</text>
-<text x="-10.16" y="-12.7" size="1.778" layer="96">&gt;VALUE</text>
-<wire x1="-10.16" y1="7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
-<wire x1="10.16" y1="7.62" x2="10.16" y2="-10.16" width="0.254" layer="94"/>
-<wire x1="10.16" y1="-10.16" x2="-10.16" y2="-10.16" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="-10.16" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
-<pin name="AIN1" x="-15.24" y="5.08" length="middle" direction="in"/>
-<pin name="AIN2" x="-15.24" y="2.54" length="middle" direction="in"/>
-<pin name="VDD" x="-15.24" y="-5.08" length="middle" direction="pwr"/>
-<pin name="GND" x="-15.24" y="-7.62" length="middle" direction="pwr"/>
-<pin name="DIN" x="15.24" y="5.08" length="middle" direction="in" rot="R180"/>
-<pin name="DOUT" x="15.24" y="2.54" length="middle" direction="out" rot="R180"/>
-<pin name="!CS" x="15.24" y="-2.54" length="middle" direction="in" function="dot" rot="R180"/>
-<pin name="SCLK" x="15.24" y="0" length="middle" direction="in" rot="R180"/>
-</symbol>
 <symbol name="ADUM2401">
 <pin name="IA" x="-15.24" y="7.62" length="middle" direction="in"/>
 <pin name="IB" x="-15.24" y="5.08" length="middle" direction="in"/>
@@ -957,38 +941,6 @@ delays between two channels are matched.</description>
 <technology name="6"/>
 <technology name="7"/>
 <technology name="8"/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="AD7887" prefix="IC">
-<description>&lt;b&gt;+2.7 V to +5.25 V, Micropower, 2-Channel,
-125 kSPS, 12-Bit ADC in 8-Lead µSOIC&lt;/b&gt;&lt;br&gt;
-GENERAL DESCRIPTION
-The AD7887 is a high speed, low power, 12-bit ADC that oper-
-ates from a single +2.7 V to +5.25 V power supply. The AD7887
-is capable of 125 kSPS throughput rate. The input track-and-
-hold acquires a signal in 500 ns and features a single-ended
-sampling scheme. The output coding for the AD7887 is straight
-binary and the part is capable of converting full power signals up to
-2.5 MHz.</description>
-<gates>
-<gate name="G$1" symbol="AD7887" x="0" y="0"/>
-</gates>
-<devices>
-<device name="ARZ" package="SO08">
-<connects>
-<connect gate="G$1" pin="!CS" pad="1"/>
-<connect gate="G$1" pin="AIN1" pad="4"/>
-<connect gate="G$1" pin="AIN2" pad="5"/>
-<connect gate="G$1" pin="DIN" pad="6"/>
-<connect gate="G$1" pin="DOUT" pad="7"/>
-<connect gate="G$1" pin="GND" pad="3"/>
-<connect gate="G$1" pin="SCLK" pad="8"/>
-<connect gate="G$1" pin="VDD" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -14866,6 +14818,91 @@ Grid 5.00 mm&lt;p&gt;
 </deviceset>
 </devicesets>
 </library>
+<library name="50w-modular-psu">
+<packages>
+<package name="SO08">
+<description>&lt;b&gt;Small Outline Package 8&lt;/b&gt;&lt;br&gt;
+NS Package M08A</description>
+<wire x1="2.4" y1="1.9" x2="2.4" y2="-1.4" width="0.2032" layer="51"/>
+<wire x1="2.4" y1="-1.4" x2="2.4" y2="-1.9" width="0.2032" layer="51"/>
+<wire x1="2.4" y1="-1.9" x2="-2.4" y2="-1.9" width="0.2032" layer="51"/>
+<wire x1="-2.4" y1="-1.9" x2="-2.4" y2="-1.4" width="0.2032" layer="51"/>
+<wire x1="-2.4" y1="-1.4" x2="-2.4" y2="1.9" width="0.2032" layer="51"/>
+<wire x1="-2.4" y1="1.9" x2="2.4" y2="1.9" width="0.2032" layer="51"/>
+<wire x1="2.4" y1="-1.4" x2="-2.4" y2="-1.4" width="0.2032" layer="21"/>
+<smd name="2" x="-0.635" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="7" x="-0.635" y="2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="1" x="-1.905" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="3" x="0.635" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="4" x="1.905" y="-2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="8" x="-1.905" y="2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="6" x="0.635" y="2.6" dx="0.6" dy="2.2" layer="1"/>
+<smd name="5" x="1.905" y="2.6" dx="0.6" dy="2.2" layer="1"/>
+<text x="-2.667" y="-1.905" size="1.27" layer="25" rot="R90">&gt;NAME</text>
+<text x="3.937" y="-1.905" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
+<rectangle x1="-2.15" y1="-3.1" x2="-1.66" y2="-2" layer="51"/>
+<rectangle x1="-0.88" y1="-3.1" x2="-0.39" y2="-2" layer="51"/>
+<rectangle x1="0.39" y1="-3.1" x2="0.88" y2="-2" layer="51"/>
+<rectangle x1="1.66" y1="-3.1" x2="2.15" y2="-2" layer="51"/>
+<rectangle x1="1.66" y1="2" x2="2.15" y2="3.1" layer="51"/>
+<rectangle x1="0.39" y1="2" x2="0.88" y2="3.1" layer="51"/>
+<rectangle x1="-0.88" y1="2" x2="-0.39" y2="3.1" layer="51"/>
+<rectangle x1="-2.15" y1="2" x2="-1.66" y2="3.1" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="AD7887">
+<text x="-10.16" y="8.89" size="1.778" layer="95">&gt;NAME</text>
+<text x="-10.16" y="-12.7" size="1.778" layer="96">&gt;VALUE</text>
+<wire x1="-10.16" y1="7.62" x2="10.16" y2="7.62" width="0.254" layer="94"/>
+<wire x1="10.16" y1="7.62" x2="10.16" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-10.16" x2="-10.16" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-10.16" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
+<pin name="AIN1" x="-15.24" y="5.08" length="middle" direction="in"/>
+<pin name="AIN0" x="-15.24" y="2.54" length="middle" direction="in"/>
+<pin name="VDD" x="-15.24" y="-5.08" length="middle" direction="pwr"/>
+<pin name="GND" x="-15.24" y="-7.62" length="middle" direction="pwr"/>
+<pin name="DIN" x="15.24" y="5.08" length="middle" direction="in" rot="R180"/>
+<pin name="DOUT" x="15.24" y="2.54" length="middle" direction="out" rot="R180"/>
+<pin name="!CS" x="15.24" y="-2.54" length="middle" direction="in" function="dot" rot="R180"/>
+<pin name="SCLK" x="15.24" y="0" length="middle" direction="in" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="AD7887" prefix="IC">
+<description>&lt;b&gt;+2.7 V to +5.25 V, Micropower, 2-Channel,
+125 kSPS, 12-Bit ADC in 8-Lead µSOIC&lt;/b&gt;&lt;br&gt;
+GENERAL DESCRIPTION
+The AD7887 is a high speed, low power, 12-bit ADC that oper-
+ates from a single +2.7 V to +5.25 V power supply. The AD7887
+is capable of 125 kSPS throughput rate. The input track-and-
+hold acquires a signal in 500 ns and features a single-ended
+sampling scheme. The output coding for the AD7887 is straight
+binary and the part is capable of converting full power signals up to
+2.5 MHz.</description>
+<gates>
+<gate name="G$1" symbol="AD7887" x="0" y="0"/>
+</gates>
+<devices>
+<device name="ARZ" package="SO08">
+<connects>
+<connect gate="G$1" pin="!CS" pad="1"/>
+<connect gate="G$1" pin="AIN0" pad="5"/>
+<connect gate="G$1" pin="AIN1" pad="4"/>
+<connect gate="G$1" pin="DIN" pad="6"/>
+<connect gate="G$1" pin="DOUT" pad="7"/>
+<connect gate="G$1" pin="GND" pad="3"/>
+<connect gate="G$1" pin="SCLK" pad="8"/>
+<connect gate="G$1" pin="VDD" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -14895,7 +14932,7 @@ Grid 5.00 mm&lt;p&gt;
 <part name="C11" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
 <part name="C10" library="rcl" deviceset="CPOL-EU" device="B/3528-21R" value="10u"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
-<part name="IC2" library="local" deviceset="AD7887" device="ARZ"/>
+<part name="IC2" library="50w-modular-psu" deviceset="AD7887" device="ARZ"/>
 <part name="IC3" library="local" deviceset="ADUM2401" device="RWZ" technology="A"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
 <part name="C14" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
@@ -15534,7 +15571,7 @@ Grid 5.00 mm&lt;p&gt;
 </net>
 <net name="N$15" class="0">
 <segment>
-<pinref part="IC2" gate="G$1" pin="AIN2"/>
+<pinref part="IC2" gate="G$1" pin="AIN0"/>
 <wire x1="55.88" y1="-38.1" x2="66.04" y2="-38.1" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="A" pin="1"/>
 </segment>

@@ -787,7 +787,7 @@ Source: http://www.analog.com/UploadedFiles/Data_Sheets/409317160AD421_c.pdf</de
 <wire x1="10.16" y1="-10.16" x2="-10.16" y2="-10.16" width="0.254" layer="94"/>
 <wire x1="-10.16" y1="-10.16" x2="-10.16" y2="7.62" width="0.254" layer="94"/>
 <pin name="AIN1" x="-15.24" y="5.08" length="middle" direction="in"/>
-<pin name="AIN2" x="-15.24" y="2.54" length="middle" direction="in"/>
+<pin name="AIN0" x="-15.24" y="2.54" length="middle" direction="in"/>
 <pin name="VDD" x="-15.24" y="-5.08" length="middle" direction="pwr"/>
 <pin name="GND" x="-15.24" y="-7.62" length="middle" direction="pwr"/>
 <pin name="DIN" x="15.24" y="5.08" length="middle" direction="in" rot="R180"/>
@@ -1039,8 +1039,8 @@ binary and the part is capable of converting full power signals up to
 <device name="ARZ" package="SO08">
 <connects>
 <connect gate="G$1" pin="!CS" pad="1"/>
+<connect gate="G$1" pin="AIN0" pad="5"/>
 <connect gate="G$1" pin="AIN1" pad="4"/>
-<connect gate="G$1" pin="AIN2" pad="5"/>
 <connect gate="G$1" pin="DIN" pad="6"/>
 <connect gate="G$1" pin="DOUT" pad="7"/>
 <connect gate="G$1" pin="GND" pad="3"/>
