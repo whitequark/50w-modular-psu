@@ -202,15 +202,50 @@ void lcd_printf(uint16 bg, uint16 fg, int x, int y, int w, const char *fmt, ...)
   va_end(vl);
 }
 
-void update_freq();
-void update_status();
-
-void spi_reset() {
+void spi_adc_reset() {
+  spi_reg_map *regs = SPI2->regs;
   spi_init(SPI2);
-  SPI2_BASE->CR1 = SPI_CR1_MSTR | SPI_CR1_BR_PCLK_DIV_64 | SPI_CR1_CPHA | SPI_CR1_DFF_16_BIT;
-  SPI2_BASE->CR2 = SPI_CR2_SSOE;
+  regs->CR1 = SPI_CR1_MSTR | SPI_CR1_BR_PCLK_DIV_16 | SPI_CR1_CPHA | SPI_CR1_DFF_16_BIT;
+  regs->CR2 = SPI_CR2_SSOE;
   spi_irq_enable(SPI2, SPI_RXNE_INTERRUPT);
 }
+
+void spi_adc_start() {
+  if(spi_is_busy(SPI2) || !spi_is_tx_empty(SPI2)) return;
+  TIMER1_BASE->CR2 &= ~TIMER_CR2_MMS;
+  gpio_write_bit(GPIOB, 12, 0);
+  spi_peripheral_enable(SPI2);
+  spi_tx_reg(SPI2, 0x3300);
+}
+
+const int adc_ringbuf_size = 32;
+uint16 adc_ringbuf[adc_ringbuf_size] = {0};
+uint8 adc_ringbuf_pos = 0;
+volatile uint16 adc_data = 0, adc_data_old = 0;
+volatile int adc_dead = 1;
+
+IRQ(__irq_spi2) {
+  uint16 val = spi_rx_reg(SPI2);
+  gpio_write_bit(GPIOB, 12, 1);
+  spi_peripheral_disable(SPI2);
+
+  if(val & 0xf000) {
+    adc_dead = 1;
+  } else {
+    adc_dead = 0;
+    adc_ringbuf[adc_ringbuf_pos++ % adc_ringbuf_size] = spi_rx_reg(SPI2);
+
+    uint32 sum = 0;
+    for(int i = 0; i < adc_ringbuf_size; i++) sum += adc_ringbuf[i];
+    adc_data_old = adc_data;
+    adc_data = sum / adc_ringbuf_size;
+  }
+
+  TIMER1_BASE->CR2 |= TIMER_CR2_MMS_UPDATE;
+}
+
+void update_freq();
+void update_status();
 
 void setup() {
   afio_init();
@@ -249,7 +284,7 @@ void setup() {
   gpio_set_mode(GPIOB, 13, GPIO_AF_OUTPUT_PP); // sck
   gpio_set_mode(GPIOB, 14, GPIO_INPUT_FLOATING); // miso
   gpio_set_mode(GPIOB, 15, GPIO_AF_OUTPUT_PP); // mosi
-  spi_reset();
+  spi_adc_reset();
 
   /* PWM out */
   gpio_set_mode(GPIOA, 8, GPIO_AF_OUTPUT_PP);
@@ -259,7 +294,16 @@ void setup() {
   timer_set_reload(TIMER1, 72000000/(80000*2));
   timer_oc_set_mode(TIMER1, TIMER_CH1, TIMER_OC_MODE_TOGGLE, TIMER_OC_PE);    
   timer_cc_enable(TIMER1, TIMER_CH1);
-  timer_pause(TIMER1);
+  regs->CR2 = (regs->CR2 & ~TIMER_CR2_MMS) | TIMER_CR2_MMS_UPDATE;
+
+  /* ADC delay timer */
+  regs = (TIMER2->regs).adv; // timer_gen_reg_map missing
+  timer_set_prescaler(TIMER2, 36 - 1); // so that reload is in microseconds
+  timer_set_reload(TIMER2, 2);
+  regs->CR1 |= TIMER_CR1_OPM;
+  regs->SMCR = (regs->SMCR & ~TIMER_SMCR_SMS) | TIMER_SMCR_SMS_TRIGGER;
+  timer_attach_interrupt(TIMER2, TIMER_UPDATE_INTERRUPT, spi_adc_start);
+  timer_enable_irq(TIMER2, TIMER_UPDATE_INTERRUPT);
   
   /* subsystems */
   lcd_init();
@@ -287,29 +331,6 @@ void update_freq() {
   lcd_printf(0xffff, 0xf800, 10, 39, 14, "%d.%d kHz", freq/1000,freq%1000);
 }
 
-const int adc_ringbuf_size = 256;
-uint16 adc_ringbuf[adc_ringbuf_size] = {0};
-uint8 adc_ringbuf_pos = 0;
-volatile uint16 adc_data = 0, adc_data_old = 0;
-volatile int adc_dead = 1;
-IRQ(__irq_spi2) {
-  uint16 val = spi_rx_reg(SPI2);
-  gpio_write_bit(GPIOB, 12, 1);
-  spi_peripheral_disable(SPI2);
-
-  if(val & 0xf000) {
-    adc_dead = 1;
-  } else {
-    adc_dead = 0;
-    adc_ringbuf[adc_ringbuf_pos++ % adc_ringbuf_size] = spi_rx_reg(SPI2);
-
-    uint32 sum = 0;
-    for(int i = 0; i < adc_ringbuf_size; i++) sum += adc_ringbuf[i];
-    adc_data_old = adc_data;
-    adc_data = sum / adc_ringbuf_size;
-  }
-}
-
 static uint32 debounce = 0;
 
 void loop() {
@@ -330,12 +351,6 @@ void loop() {
     }
   }
 
-  if(spi_is_tx_empty(SPI2)) {
-    gpio_write_bit(GPIOB, 12, 0);
-    spi_peripheral_enable(SPI2);
-    spi_tx_reg(SPI2, 0x3300);
-  }
-
   if(adc_dead) {
     lcd_text(0xffff, 0xf800, 10, 60, "DEAD");
     adc_data_old = 0;
@@ -344,7 +359,6 @@ void loop() {
     adc_data_old = adc_data;
   }
 
-  if(SPI2_BASE->SR == 0x00) {
-    spi_reset();
-  }
+  //if(SPI2_BASE->SR == 0x00)
+  //  spi_adc_reset();
 }
