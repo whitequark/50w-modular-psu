@@ -3345,7 +3345,7 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="NAME" x="49.2125" y="27.305" size="1.27" layer="25" rot="R180"/>
 <attribute name="VALUE" x="51.435" y="27.305" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="D3" library="diode" package="SOT23" value="BAS70" x="118.665" y="26.67" smashed="yes" rot="R270">
+<element name="D3" library="diode" package="SOT23" value="BAS21" x="118.665" y="26.67" smashed="yes" rot="R270">
 <attribute name="NAME" x="117.395" y="24.765" size="1.27" layer="25" rot="R270"/>
 <attribute name="VALUE" x="115.49" y="28.575" size="1.27" layer="27" rot="R270"/>
 </element>

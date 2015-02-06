@@ -14928,7 +14928,7 @@ binary and the part is capable of converting full power signals up to
 <part name="P+2" library="supply1" deviceset="+12V" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="C2" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
-<part name="D3" library="diode" deviceset="BAS70" device=""/>
+<part name="D3" library="diode" deviceset="BAS70" device="" value="BAS21"/>
 <part name="C11" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
 <part name="C10" library="rcl" deviceset="CPOL-EU" device="B/3528-21R" value="10u"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="C1206" value="100n"/>
